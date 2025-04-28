@@ -3,7 +3,7 @@ name: Build APK with Buildozer
 on:
   push:
     branches:
-      - main  # or change to your branch name if needed
+      - main
 
 jobs:
   build:
@@ -15,7 +15,7 @@ jobs:
 
       - name: Run Buildozer inside Docker and Build APK
         run: |
-          docker run --rm -v ${{ github.workspace }}:/home/user/app kivy/buildozer bash -c "
+          docker run --rm -v ${{ github.workspace }}:/home/user/app flox84/buildozer bash -c "
             apt update && apt upgrade -y && apt --fix-broken install -y &&
             buildozer android debug
           "
