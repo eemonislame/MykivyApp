@@ -23,7 +23,7 @@ jobs:
             -w /home/user/app \
             -e BUILDOZER_GLOBAL_DIR=/tmp/.buildozer \
             ghcr.io/kivy/buildozer:latest \
-            /bin/sh -c "buildozer android debug"
+            android debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
