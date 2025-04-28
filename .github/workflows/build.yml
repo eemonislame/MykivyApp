@@ -3,7 +3,7 @@ name: Build APK with Buildozer
 on:
   push:
     branches:
-      - main  # Make sure you are pushing to main branch
+      - main  # or change to your branch name if needed
 
 jobs:
   build:
@@ -12,11 +12,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Set up Docker
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y docker.io
 
       - name: Run Buildozer inside Docker and Build APK
         run: |
