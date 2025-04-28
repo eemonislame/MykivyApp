@@ -13,13 +13,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Pull Buildozer Docker image
+      - name: Build APK
         run: |
-          docker pull ghcr.io/kivy/buildozer:latest
-
-      - name: Build APK with Buildozer
-        run: |
-          docker run --rm -v ${{ github.workspace }}:/home/user/app ghcr.io/kivy/buildozer:latest bash -c "buildozer android debug"
+          docker run --rm -v ${{ github.workspace }}:/home/user/app ghcr.io/kivy/buildozer:latest android debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
