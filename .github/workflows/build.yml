@@ -18,11 +18,13 @@ jobs:
 
       - name: Build APK
         run: |
+          sudo chmod -R 777 /tmp
           docker run --rm \
             -v ${{ github.workspace }}:/home/user/app \
             -w /home/user/app \
+            -e BUILDOZER_GLOBAL_DIR=/tmp/.buildozer \
             ghcr.io/kivy/buildozer:latest \
-            bash -c "mkdir -p /home/user/app/.buildozer && chown -R user:user /home/user/app/.buildozer && buildozer android debug"
+            android debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
