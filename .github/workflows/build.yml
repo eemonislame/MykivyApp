@@ -1,27 +1,26 @@
-name: Build APK with Buildozer
-
-on:
-  push:
-    branches:
-      - main
+# From https://github.com/marketplace/actions/buildozer-action
+name: Build
+on: [push, pull_request]
 
 jobs:
-  build:
+  # Build job. Builds app for Android with Buildozer
+  build-android:
+    name: Build for Android
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v2
 
-      - name: Run Buildozer inside Docker and Build APK
-        run: |
-          docker run --rm -v ${{ github.workspace }}:/home/user/app flox84/buildozer bash -c "
-            apt update && apt upgrade -y && apt --fix-broken install -y &&
-            buildozer android debug
-          "
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
+      - name: Build with Buildozer
+        uses: ArtemSBulgakov/buildozer-action@v1
+        id: buildozer
         with:
-          name: mykivyapp-apk
-          path: bin/*.apk
+          command: buildozer android debug
+          buildozer_version: stable
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: package
+          path: ${{ steps.buildozer.outputs.filename }}
