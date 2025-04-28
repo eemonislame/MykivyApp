@@ -20,8 +20,8 @@ jobs:
         run: |
           docker run --rm \
             -v ${{ github.workspace }}:/home/user/app \
-            -e BUILDOZER_GLOBAL_DIR=/tmp/.buildozer
             -w /home/user/app \
+            -e BUILDOZER_GLOBAL_DIR=/tmp/.buildozer \
             ghcr.io/kivy/buildozer:latest \
             android debug
 
