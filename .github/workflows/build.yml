@@ -1,33 +1,37 @@
-name: Build APK
+name: "build"
 
 on:
-  push:
-    branches:
-      - main
+  pull_request:
+  schedule:
+    - cron: "0 0 * * *" # Run everyday
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Pull Buildozer Docker image
-        run: docker pull ghcr.io/kivy/buildozer:latest
-
-      - name: Build APK
-        run: |
-          sudo chmod -R 777 /tmp
-          docker run --rm \
-            -v ${{ github.workspace }}:/home/user/app \
-            -w /home/user/app \
-            -e BUILDOZER_GLOBAL_DIR=/tmp/.buildozer \
-            ghcr.io/kivy/buildozer:latest \
-            android debug
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
         with:
-          name: built-apk
-          path: bin/*.apk
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+      - uses: actions/setup-python@v5
+        with:
+          python-version: 3.13
+          allow-prereleases: true
+      - run: uv sync --group=test
+      - name: Run tests
+        # TODO: #8818 Re-enable quantum tests
+        run: uv run pytest
+          --ignore=computer_vision/cnn_classification.py
+          --ignore=docs/conf.py
+          --ignore=dynamic_programming/k_means_clustering_tensorflow.py
+          --ignore=machine_learning/lstm/lstm_prediction.py
+          --ignore=neural_network/input_data.py
+          --ignore=project_euler/
+          --ignore=quantum/q_fourier_transform.py
+          --ignore=scripts/validate_solutions.py
+          --ignore=web_programming/fetch_anime_and_play.py
+          --cov-report=term-missing:skip-covered
+          --cov=. .
+      - if: ${{ success() }}
+        run: scripts/build_directory_md.py 2>&1 | tee DIRECTORY.md
